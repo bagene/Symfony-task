@@ -20,5 +20,38 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    controllers:
+        namespace: App\
+        resource: '%kernel.project_dir%/src/*/Infrastructure/Controllers/'
+        tags: ['controller.service_arguments']
+
+    query_handlers:
+        namespace: App\
+        resource: '%kernel.project_dir%/src/*/Application/Query/**/*QueryHandler.php'
+        autoconfigure: false
+        tags:
+            - { name: messenger.message_handler, bus: messenger.bus.default }
+
+    doctrine_repositories:
+        namespace: App\
+        resource: '%kernel.project_dir%/src/*/Infrastructure/Repositories/Doctrine*Repository.php'
+        tags:
+            - { name: doctrine.repository_service }
+
+    api_gateways:
+        namespace: App\Shared\Infrastructure\Gateway\
+        resource: '%kernel.project_dir%/src/Shared/Infrastructure/Gateway/*ApiGateway.php'
+
+when@test:
+    services:
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        App\Tests\Shared\Service\MockRandomUserApi:
+            arguments: [ '%kernel.project_dir%' ]
+
+        api_gateways:
+            namespace: App\Shared\Infrastructure\Gateway\
+            resource: '%kernel.project_dir%/src/Shared/Infrastructure/Gateway/*ApiGateway.php'
+            public: true

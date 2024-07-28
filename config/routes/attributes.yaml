@@ -1,0 +1,6 @@
+controllers:
+  # Add each domain controller here
+  resource:
+    path: ../../src/User/Infrastructure/Controllers/
+    namespace: App\User\Infrastructure\Controllers
+  type: attribute
